@@ -1,49 +1,47 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import AddPerimeters from './components/AddPerimeters';
-import Weather from './components/Weather';
+import { useState } from "react";
+import "./App.css";
+import AddPerimeters from "./components/AddPerimeters";
+import Weather from "./components/Weather";
+import { fetchWeatherByCity } from "./services/weatherService";
 
 function App() {
-  const [city, setCity] = useState('');
+  const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
- 
 
-
-  function handleChange(e){
+  function handleChange(e) {
     setCity(e.target.value);
   }
 
-  function handleSearch(e){
+  function handleSearch(e) {
     e.preventDefault();
-    console.log('Searching data for:', city)
-     const apiKey = '837e448dbf7aa9520d41356bf332cdd8';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;  
+    console.log("Searching data for:", city);
 
-      fetch(apiUrl)
-      .then(response=> response.json())
-      .then(data => {
+    fetchWeatherByCity(city)
+      .then((data) => {
         setWeather(data);
       })
-      .catch(error => {
-        console.error('Error fetching weather data:', error);
+      .catch((error) => {
+        console.error("Error fetching weather data:", error);
+        setWeather(null);
       });
-   }
-
-   
-
-
+  }
 
   return (
+    <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-br from-blue-900 via-blue-600 to-blue-300 ">
+      <div className="w-[500px] space-y-6 bg-white bg-opacity-55 rounded-xl shadow-2xl p-8 backdrop-blur-md">
+        <h1 className="text-4xl text-center text-blue-900 font-bold font-mono drop-shadow-lg">
+          Weather App
+        </h1>
+        <AddPerimeters
+          city={city}
+          handleChange={handleChange}
+          handleSearch={handleSearch}
+        />
 
-    <div className='w-screen h-screen bg-gray-700 flex justify-center p-6'>
-      <div className='w-[500px] space-y-4'>
-        <h1 className='text text-3xl text-center text-slate-100 font-mono'>Weather App</h1>
-        <AddPerimeters city={city} handleChange={handleChange}  handleSearch={handleSearch}/>
         <Weather weatherData={weather} />
       </div>
     </div>
   );
-
 }
 
-export default App
+export default App;
